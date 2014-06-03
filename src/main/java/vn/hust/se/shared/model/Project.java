@@ -17,29 +17,53 @@
  */
 package vn.hust.se.shared.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Ignore;
 
 /**
  * @author heroandtn3
  * @date Jun 2, 2014
  */
-public class Project {
 
+@Entity
+public class Project implements Serializable, IsSerializable {
+	
+	/**
+	 * 
+	 */
+	@Ignore private static final long serialVersionUID = 1L;
+	@Id
+	private Long id;
 	private String name;
+	
+	@Ignore
 	private float npv;
+	@Ignore
 	private float irr;
 	private float tienLaiTichLuy;
+	@Ignore
 	private float timeHoanVon;
 
 	// list of phases
+	@Ignore
 	private List<Phase> phases;
 
 	// total from phases
+	@Ignore
 	private float totalRevenue; // tong thu
+	@Ignore
 	private float totalPay; // tong chi
+	@Ignore
 	private float totalFv;
+	@Ignore
 	private float totalPv;
+	@Ignore
 	private float totalRoi;
 
 	/**
@@ -47,6 +71,14 @@ public class Project {
 	 */
 	public Project() {
 		phases = new ArrayList<Phase>();
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {

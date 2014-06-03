@@ -24,6 +24,7 @@ import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.AlertType;
 
+import vn.hust.se.client.service.DataService;
 import vn.hust.se.shared.model.Project;
 
 import com.google.gwt.core.client.GWT;
@@ -31,6 +32,8 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
@@ -73,8 +76,24 @@ public class ProjectModal extends Composite {
 					alertMsg.setText("Name is empty");
 				} else {
 					createBtn.setEnabled(false);
-					modal.hide();
-					createBtn.setEnabled(true);
+					Project project = new Project();
+					project.setName(name);
+					DataService.pDb.insertProject(project, new AsyncCallback<Void>() {
+						
+						@Override
+						public void onSuccess(Void result) {
+							createBtn.setEnabled(true);
+							modal.hide();
+						}
+						
+						@Override
+						public void onFailure(Throwable caught) {
+							createBtn.setEnabled(true);
+							Window.alert("Error");
+							
+						}
+					});
+					
 				}
 			}
 		});

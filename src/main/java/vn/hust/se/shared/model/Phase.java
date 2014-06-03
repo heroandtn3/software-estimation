@@ -17,12 +17,27 @@
  */
 package vn.hust.se.shared.model;
 
+import java.io.Serializable;
+
+import com.google.gwt.user.client.rpc.IsSerializable;
+import com.googlecode.objectify.annotation.Entity;
+import com.googlecode.objectify.annotation.Id;
+import com.googlecode.objectify.annotation.Ignore;
+
 /**
  * @author heroandtn3
  * @date Jun 3, 2014
  */
-public class Phase {
+
+@Entity
+public class Phase implements Serializable, IsSerializable {
 	
+	/**
+	 * 
+	 */
+	@Ignore private static final long serialVersionUID = 1L;
+	@Id
+	private Long id;
 	private String name; // ten giai doan
 	private float revenue; // thu
 	private float pay; // chi
@@ -35,6 +50,14 @@ public class Phase {
 	 * 
 	 */
 	public Phase() {
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {

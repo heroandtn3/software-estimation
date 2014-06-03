@@ -19,5 +19,15 @@
 		<filter-name>ObjectifyFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
+	<!-- Servlets -->
+	<servlet>
+		<servlet-name>projectService</servlet-name>
+		<servlet-class>vn.hust.se.server.ProjectServiceImpl</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>projectService</servlet-name>
+		<url-pattern>/SoftwareEstimation/projectService</url-pattern>
+	</servlet-mapping>
 
 </web-app>

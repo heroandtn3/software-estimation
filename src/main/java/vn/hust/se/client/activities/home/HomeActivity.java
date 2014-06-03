@@ -17,16 +17,16 @@
  */
 package vn.hust.se.client.activities.home;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import vn.hust.se.client.activities.ClientFactory;
 import vn.hust.se.client.activities.base.BaseActivity;
-import vn.hust.se.shared.model.Phase;
+import vn.hust.se.client.service.DataService;
 import vn.hust.se.shared.model.Project;
 
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
@@ -50,25 +50,18 @@ public class HomeActivity extends BaseActivity {
 		view = clientFactory.getHomeView();
 		panel.setWidget(view.asWidget());
 		
-		List<Project> projects = new ArrayList<Project>();
-		for (int i = 0; i < 10; i++) {
-			Project project = new Project();
-			projects.add(project);
+		DataService.pDb.getAllProject(new AsyncCallback<List<Project>>() {
 			
-			project.setName("Du an "  + i);
-			project.setIrr(i);
-			
-			List<Phase> phases = new ArrayList<Phase>();
-			project.setPhases(phases);
-			
-			for (int j = 0; j < 5; j++) {
-				Phase phase = new Phase();
-				phases.add(phase);
-				phase.setName("Giai doan " + j);
-				phase.setRevenue(j);
+			@Override
+			public void onSuccess(List<Project> result) {
+				view.showProjects(result);
 			}
-		}
-		view.showProjects(projects);
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				caught.printStackTrace();
+			}
+		});
 		
 		addHandlerRegistration(view.getAddProjectBtn().addClickHandler(new ClickHandler() {
 			
