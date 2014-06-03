@@ -45,4 +45,6 @@ public interface ProjectServiceAsync {
 
 	void getAllProject(AsyncCallback<List<Project>> callback);
 
+	void getPhasesByProject(Long projectId, AsyncCallback<List<Phase>> callback);
+
 }

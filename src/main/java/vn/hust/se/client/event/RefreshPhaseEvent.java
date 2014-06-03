@@ -15,42 +15,32 @@
  * You should have received a copy of the GNU General Public License
  * along with software-estimation.  If not, see <http://www.gnu.org/licenses/>.
  */
-package vn.hust.se.client.service;
+package vn.hust.se.client.event;
 
-import java.util.List;
-
-import vn.hust.se.shared.model.Phase;
-import vn.hust.se.shared.model.Project;
-
-import com.google.gwt.user.client.rpc.RemoteService;
-import com.google.gwt.user.client.rpc.RemoteServiceRelativePath;
+import com.google.gwt.event.shared.GwtEvent;
 
 /**
  * @author heroandtn3
- * @date Jun 3, 2014
+ * @date Jun 4, 2014
  */
+public class RefreshPhaseEvent extends GwtEvent<RefreshPhaseHandler> {
+	
+	public final static Type<RefreshPhaseHandler> TYPE = new Type<RefreshPhaseHandler>();
 
-@RemoteServiceRelativePath("projectService")
-public interface ProjectService extends RemoteService {
-	
-	// Project
-	
-	List<Project> getAllProject();
-	
-	void insertProject(Project project);
-	
-	void deleteProject(Long projectId);
-	
-	void renameProject(Long projectId, String newName);
-	
-	// Phase
-	
-	List<Phase> getPhasesByProject(Long projectId);
-	
-	void insertPhase(Phase phase);
-	
-	void deletePhase(Long phaseId);
-	
-	void updatePhase(Phase phase);
+	/**
+	 * 
+	 */
+	public RefreshPhaseEvent() {
+	}
+
+	@Override
+	public com.google.gwt.event.shared.GwtEvent.Type<RefreshPhaseHandler> getAssociatedType() {
+		return TYPE;
+	}
+
+	@Override
+	protected void dispatch(RefreshPhaseHandler handler) {
+		handler.onRefresh(this);
+	}
 
 }

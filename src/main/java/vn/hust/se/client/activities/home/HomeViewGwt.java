@@ -17,12 +17,18 @@
  */
 package vn.hust.se.client.activities.home;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.gwtbootstrap3.client.ui.Button;
 
+import vn.hust.se.client.SoftwareEstimation;
 import vn.hust.se.client.activities.base.BaseViewGwt;
+import vn.hust.se.client.event.RefreshProjectEvent;
+import vn.hust.se.client.service.DataService;
+import vn.hust.se.client.view.ConfirmDialog;
 import vn.hust.se.client.view.PhaseCellTable;
+import vn.hust.se.client.view.PhaseModal;
 import vn.hust.se.client.view.ProjectCellTable;
 import vn.hust.se.client.view.ProjectModal;
 import vn.hust.se.shared.model.Phase;
@@ -30,10 +36,12 @@ import vn.hust.se.shared.model.Project;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SelectionChangeEvent.Handler;
@@ -62,8 +70,12 @@ public class HomeViewGwt extends BaseViewGwt implements HomeView {
 	@UiField Button editPhaseBtn;
 	@UiField Button delPhaseBtn;
 	
+	@UiField Button refreshBtn;
+	
 	
 	private ProjectModal projectModal = new ProjectModal();
+	private PhaseModal phaseModal = new PhaseModal();
+	private ConfirmDialog confirmDialog = new ConfirmDialog();
 
 	public HomeViewGwt() {
 		mainPanel.add(uiBinder.createAndBindUi(this));
@@ -74,7 +86,7 @@ public class HomeViewGwt extends BaseViewGwt implements HomeView {
 			public void onSelectionChange(SelectionChangeEvent event) {
 				Phase selectedPhase = phaseTable.getSelectionModel().getSelectedObject();
 				if (selectedPhase != null) {
-					Window.alert("Selected " + selectedPhase.getName());
+					// TODO
 				}
 				
 			}
@@ -87,8 +99,28 @@ public class HomeViewGwt extends BaseViewGwt implements HomeView {
 				Project selectedProject = projectTable.getSelectionModel().getSelectedObject();
 				if (selectedProject != null) {
 					projectDetailTitle.setInnerText("Chi tiết dự án " + selectedProject.getName());
-					showPhases(selectedProject.getPhases());
+					DataService.pDb.getPhasesByProject(
+							selectedProject.getId(), new AsyncCallback<List<Phase>>() {
+								@Override
+								public void onFailure(Throwable caught) {
+									caught.printStackTrace();
+									showPhases(new ArrayList<Phase>());
+								}
+
+								@Override
+								public void onSuccess(List<Phase> result) {
+									showPhases(result);
+								}
+							});
 				}
+			}
+		});
+		
+		refreshBtn.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				SoftwareEstimation.clientFactory.getEventBus().fireEvent(new RefreshProjectEvent());
 			}
 		});
 	}
@@ -136,6 +168,26 @@ public class HomeViewGwt extends BaseViewGwt implements HomeView {
 	@Override
 	public ProjectModal getProjectModal() {
 		return projectModal;
+	}
+	
+	@Override
+	public PhaseModal getPhaseModal() {
+		return phaseModal;
+	}
+	
+	@Override
+	public Phase getSelectedPhase() {
+		return phaseTable.getSelectionModel().getSelectedObject();
+	}
+	
+	@Override
+	public Project getSelectedProject() {
+		return projectTable.getSelectionModel().getSelectedObject();
+	}
+	
+	@Override
+	public ConfirmDialog getConfirmDialog() {
+		return confirmDialog;
 	}
 
 }

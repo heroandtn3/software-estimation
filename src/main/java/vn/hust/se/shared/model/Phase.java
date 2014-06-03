@@ -23,6 +23,7 @@ import com.google.gwt.user.client.rpc.IsSerializable;
 import com.googlecode.objectify.annotation.Entity;
 import com.googlecode.objectify.annotation.Id;
 import com.googlecode.objectify.annotation.Ignore;
+import com.googlecode.objectify.annotation.Index;
 
 /**
  * @author heroandtn3
@@ -38,12 +39,16 @@ public class Phase implements Serializable, IsSerializable {
 	@Ignore private static final long serialVersionUID = 1L;
 	@Id
 	private Long id;
+	@Index
+	private int order;
+	@Index
+	private Long projectId;
 	private String name; // ten giai doan
 	private float revenue; // thu
 	private float pay; // chi
-	private float fv; // FV
-	private float pv; // PV
-	private float roi; // ROI
+	@Ignore private float fv; // FV
+	@Ignore private float pv; // PV
+	@Ignore private float roi; // ROI
 	private float r; // lai suat
 
 	/**
@@ -52,12 +57,28 @@ public class Phase implements Serializable, IsSerializable {
 	public Phase() {
 	}
 	
+	public Long getProjectId() {
+		return projectId;
+	}
+	
+	public void setProjectId(Long projectId) {
+		this.projectId = projectId;
+	}
+	
 	public Long getId() {
 		return id;
 	}
 	
 	public void setId(Long id) {
 		this.id = id;
+	}
+	
+	public int getOrder() {
+		return order;
+	}
+	
+	public void setOrder(int order) {
+		this.order = order;
 	}
 
 	public String getName() {

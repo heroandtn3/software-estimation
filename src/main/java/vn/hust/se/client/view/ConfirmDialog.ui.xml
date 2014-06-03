@@ -1,0 +1,18 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:b="urn:import:org.gwtbootstrap3.client.ui">
+	<ui:style>
+	
+	</ui:style>
+	<g:HTMLPanel>
+		<b:Modal closable="true" fade="true" keyboard="true" ui:field="modal">
+			<b:ModalBody>
+				<b:Heading ui:field="message" size="4"></b:Heading>
+			</b:ModalBody>
+			<b:ModalFooter>
+				<b:Button ui:field="okBtn" type="PRIMARY" >OK</b:Button>
+				<b:Button ui:field="cancelBtn" type="DANGER" dismiss="MODAL">Cancel</b:Button>
+			</b:ModalFooter>
+		</b:Modal>
+	</g:HTMLPanel>
+</ui:UiBinder> 

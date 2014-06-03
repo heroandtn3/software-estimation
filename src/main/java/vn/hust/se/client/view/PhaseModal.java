@@ -17,69 +17,146 @@
  */
 package vn.hust.se.client.view;
 
+import org.gwtbootstrap3.client.ui.Alert;
+import org.gwtbootstrap3.client.ui.Button;
+import org.gwtbootstrap3.client.ui.Heading;
+import org.gwtbootstrap3.client.ui.Modal;
+import org.gwtbootstrap3.client.ui.TextBox;
+
+import vn.hust.se.client.SoftwareEstimation;
+import vn.hust.se.client.event.RefreshPhaseEvent;
+import vn.hust.se.client.service.DataService;
+import vn.hust.se.shared.model.Phase;
+import vn.hust.se.shared.model.Project;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.uibinder.client.UiHandler;
-import com.google.gwt.user.client.Window;
-import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.Composite;
-import com.google.gwt.user.client.ui.HasText;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Widget;
 
 /**
  * @author heroandtn3
  * @date Jun 3, 2014
  */
-public class PhaseModal extends Composite implements HasText {
+public class PhaseModal extends Composite {
 
 	private static PhaseModalUiBinder uiBinder = GWT
 			.create(PhaseModalUiBinder.class);
 
 	interface PhaseModalUiBinder extends UiBinder<Widget, PhaseModal> {
 	}
+	
+	@UiField Modal modal;
+	@UiField Heading title;
+	@UiField Button updateBtn;
+	@UiField Button createBtn;
+	@UiField TextBox nameTb;
+	@UiField TextBox revenueTb;
+	@UiField TextBox payTb;
+	@UiField TextBox rateTb;
+	@UiField Alert alertPanel;
+	@UiField HTML alertMsg;
+	private Project project;
+	private Phase phase;
 
-	/**
-	 * Because this class has a default constructor, it can
-	 * be used as a binder template. In other words, it can be used in other
-	 * *.ui.xml files as follows:
-	 * <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
-	 *   xmlns:g="urn:import:**user's package**">
-	 *  <g:**UserClassName**>Hello!</g:**UserClassName>
-	 * </ui:UiBinder>
-	 * Note that depending on the widget that is used, it may be necessary to
-	 * implement HasHTML instead of HasText.
-	 */
+	
 	public PhaseModal() {
 		initWidget(uiBinder.createAndBindUi(this));
+		
+		alertPanel.setVisible(false);
+		createBtn.setVisible(false);
+		updateBtn.setVisible(false);
+		
+		createBtn.addClickHandler(new ClickHandler() {
+			@Override
+			public void onClick(ClickEvent event) {
+				final Phase phase = new Phase();
+				phase.setName(nameTb.getText());
+				phase.setRevenue(Float.parseFloat(revenueTb.getText()));
+				phase.setPay(Float.parseFloat(payTb.getText()));
+				phase.setR(Float.parseFloat(rateTb.getText()));
+				phase.setOrder(project.getPhases().size());
+				phase.setProjectId(project.getId());
+				
+				createBtn.setEnabled(false);
+				DataService.pDb.insertPhase(phase, new AsyncCallback<Void>() {
+					
+					@Override
+					public void onSuccess(Void result) {
+						createBtn.setEnabled(true);
+						project.getPhases().add(phase);
+						modal.hide();
+						SoftwareEstimation.clientFactory.getEventBus().fireEvent(new RefreshPhaseEvent());
+					}
+					
+					@Override
+					public void onFailure(Throwable caught) {
+						caught.printStackTrace();
+						createBtn.setEnabled(true);
+					}
+				});
+			}
+		});
+		
+		updateBtn.addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				phase.setName(nameTb.getText());
+				phase.setRevenue(Float.parseFloat(revenueTb.getText()));
+				phase.setPay(Float.parseFloat(payTb.getText()));
+				phase.setR(Float.parseFloat(rateTb.getText()));
+				
+				updateBtn.setEnabled(false);
+				DataService.pDb.updatePhase(phase, new AsyncCallback<Void>() {
+
+					@Override
+					public void onFailure(Throwable caught) {
+						updateBtn.setEnabled(true);
+						caught.printStackTrace();
+					}
+
+					@Override
+					public void onSuccess(Void result) {
+						updateBtn.setEnabled(true);
+						modal.hide();
+						SoftwareEstimation.clientFactory.getEventBus().fireEvent(new RefreshPhaseEvent());
+					}
+				});
+			}
+		});
 	}
-
-	@UiField
-	Button button;
-
-	public PhaseModal(String firstName) {
-		initWidget(uiBinder.createAndBindUi(this));
-
-		// Can access @UiField after calling createAndBindUi
-		button.setText(firstName);
+	
+	public void addPhase(Project project) {
+		this.project = project;
+		title.setText("Thêm giai đoạn");
+		createBtn.setVisible(true);
+		updateBtn.setVisible(false);
+		nameTb.setText("");
+		revenueTb.setText("");
+		payTb.setText("");
+		rateTb.setText("");
+		modal.show();
+		
 	}
-
-	@UiHandler("button")
-	void onClick(ClickEvent e) {
-		Window.alert("Hello!");
-	}
-
-	public void setText(String text) {
-		button.setText(text);
-	}
-
-	/**
-	 * Gets invoked when the default constructor is called
-	 * and a string is provided in the ui.xml file.
-	 */
-	public String getText() {
-		return button.getText();
+	
+	public void editPhase(Phase phase) {
+		this.phase = phase;
+		title.setText("Sửa giai đoạn");
+		createBtn.setVisible(false);
+		updateBtn.setVisible(true);
+		
+		nameTb.setText(phase.getName());
+		revenueTb.setText(phase.getRevenue() + "");
+		payTb.setText(phase.getPay() + "");
+		rateTb.setText(phase.getR() + "");
+		
+		modal.show();
 	}
 
 }

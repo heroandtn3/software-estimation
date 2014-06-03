@@ -17,11 +17,18 @@
  */
 package vn.hust.se.client.activities.home;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import vn.hust.se.client.activities.ClientFactory;
 import vn.hust.se.client.activities.base.BaseActivity;
+import vn.hust.se.client.event.RefreshPhaseEvent;
+import vn.hust.se.client.event.RefreshPhaseHandler;
+import vn.hust.se.client.event.RefreshProjectEvent;
+import vn.hust.se.client.event.RefreshProjectHandler;
 import vn.hust.se.client.service.DataService;
+import vn.hust.se.client.view.ConfirmDialog.ConfirmCallback;
+import vn.hust.se.shared.model.Phase;
 import vn.hust.se.shared.model.Project;
 
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -50,18 +57,7 @@ public class HomeActivity extends BaseActivity {
 		view = clientFactory.getHomeView();
 		panel.setWidget(view.asWidget());
 		
-		DataService.pDb.getAllProject(new AsyncCallback<List<Project>>() {
-			
-			@Override
-			public void onSuccess(List<Project> result) {
-				view.showProjects(result);
-			}
-			
-			@Override
-			public void onFailure(Throwable caught) {
-				caught.printStackTrace();
-			}
-		});
+		
 		
 		addHandlerRegistration(view.getAddProjectBtn().addClickHandler(new ClickHandler() {
 			
@@ -75,12 +71,161 @@ public class HomeActivity extends BaseActivity {
 			
 			@Override
 			public void onClick(ClickEvent event) {
-				view.getProjectModal().editProject(null);
+				Project selectedProject = view.getSelectedProject();
+				if (selectedProject != null) {
+					view.getProjectModal().editProject(selectedProject);
+				}
 			}
 		}));
 		
+		addHandlerRegistration(view.getAddPhaseBtn().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Project selectedProject = view.getSelectedProject();
+				if (selectedProject != null) {
+					view.getPhaseModal().addPhase(selectedProject);
+				}
+				
+			}
+		}));
+		
+		addHandlerRegistration(view.getDelPhaseBtn().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				final Phase selectedPhase = view.getSelectedPhase();
+				if (selectedPhase != null) {
+					view.getConfirmDialog().confirm(
+							"Xóa giai đoạn\"" + selectedPhase.getName() + "\"?", 
+							new ConfirmCallback() {
+
+								@Override
+								public void onOk() {
+									DataService.pDb.deletePhase(selectedPhase.getId(), new AsyncCallback<Void>() {
+
+										@Override
+										public void onFailure(Throwable caught) {
+										}
+
+										@Override
+										public void onSuccess(Void result) {
+											showPhases(view.getSelectedProject());
+										}
+									});
+									
+								}
+
+								@Override
+								public void onCancel() {
+								}});
+				}
+			}
+		}));
+		
+		addHandlerRegistration(view.getDelProjectBtn().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				final Project selectedProject = view.getSelectedProject();
+				if (selectedProject != null) {
+					view.getConfirmDialog().confirm(
+							"Xóa dự án\"" + selectedProject.getName() + "\"?", 
+							new ConfirmCallback() {
+
+								@Override
+								public void onOk() {
+									DataService.pDb.deleteProject(
+											selectedProject.getId(), new AsyncCallback<Void>() {
+												@Override
+												public void onFailure(Throwable caught) {
+													caught.printStackTrace();
+												}
+
+												@Override
+												public void onSuccess(Void result) {
+													showProjects();
+													showPhases(null);
+												}});
+								}
+
+								@Override
+								public void onCancel() {
+								}});
+					
+				}
+			}
+		}));
+		
+		addHandlerRegistration(view.getEditPhaseBtn().addClickHandler(new ClickHandler() {
+			
+			@Override
+			public void onClick(ClickEvent event) {
+				Phase selectedPhase = view.getSelectedPhase();
+				if (selectedPhase != null) {
+					view.getPhaseModal().editPhase(selectedPhase);
+				}
+			}
+		}));
+		
+		addHandlerRegistration(eventBus.addHandler(
+				RefreshProjectEvent.TYPE, new RefreshProjectHandler() {
+					
+					@Override
+					public void onRefresh(RefreshProjectEvent event) {
+						showProjects();
+					}
+				}));
+		
+		addHandlerRegistration(eventBus.addHandler(
+				RefreshPhaseEvent.TYPE, new RefreshPhaseHandler() {
+					
+					@Override
+					public void onRefresh(RefreshPhaseEvent event) {
+						showPhases(view.getSelectedProject());
+					}
+				}));
+		
+		// show projects first time
+		showProjects();
+		
 	}
 	
+	private void showProjects() {
+		DataService.pDb.getAllProject(new AsyncCallback<List<Project>>() {
+			
+			@Override
+			public void onSuccess(List<Project> result) {
+				view.showProjects(result);
+			}
+			
+			@Override
+			public void onFailure(Throwable caught) {
+				caught.printStackTrace();
+			}
+		});
+	}
+	
+	private void showPhases(Project project) {
+		if (project != null) {
+			DataService.pDb.getPhasesByProject(
+					project.getId(), new AsyncCallback<List<Phase>>() {
+						@Override
+						public void onFailure(Throwable caught) {
+							caught.printStackTrace();
+							view.showPhases(new ArrayList<Phase>());
+						}
+
+						@Override
+						public void onSuccess(List<Phase> result) {
+							view.showPhases(result);
+						}
+					});
+		} else {
+			view.showPhases(new ArrayList<Phase>());
+		}
+		
+	}
 	
 	@Override
 	public void onStop() {

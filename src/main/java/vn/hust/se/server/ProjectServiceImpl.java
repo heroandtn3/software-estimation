@@ -20,6 +20,7 @@ package vn.hust.se.server;
 import java.util.ArrayList;
 import java.util.List;
 
+import vn.hust.se.client.AppUtils;
 import vn.hust.se.client.service.ProjectService;
 import vn.hust.se.shared.model.Phase;
 import vn.hust.se.shared.model.Project;
@@ -44,15 +45,24 @@ public class ProjectServiceImpl extends RemoteServiceServlet implements ProjectS
 		ObjectifyService.register(Phase.class);
 	}
 
+	private AppUtils appUtils;
+
 	/**
 	 * 
 	 */
 	public ProjectServiceImpl() {
+		appUtils = new AppUtils();
 	}
 	
 	@Override
 	public List<Project> getAllProject() {
 		List<Project> projects = ofy().load().type(Project.class).list();
+		for (Project project : projects) {
+			List<Phase> phases = ofy().load().type(Phase.class).filter("projectId", project.getId()).order("order").list();
+			project.setPhases(new ArrayList<Phase>(phases));
+			appUtils.calculate(project);
+		}
+		
 		return new ArrayList<Project>(projects);
 	}
 
@@ -63,7 +73,12 @@ public class ProjectServiceImpl extends RemoteServiceServlet implements ProjectS
 
 	@Override
 	public void deleteProject(Long projectId) {
+		List<Phase> phases = getPhasesByProject(projectId);
+		for (Phase phase : phases) {
+			ofy().delete().type(Phase.class).id(phase.getId());
+		}
 		ofy().delete().type(Project.class).id(projectId).now();
+		
 	}
 
 	@Override
@@ -72,6 +87,15 @@ public class ProjectServiceImpl extends RemoteServiceServlet implements ProjectS
 		project.setName(newName);
 		ofy().save().entity(project).now();
 		
+	}
+	
+	@Override
+	public List<Phase> getPhasesByProject(Long projectId) {
+		Project project = ofy().load().type(Project.class).id(projectId).now();
+		List<Phase> phases = ofy().load().type(Phase.class).filter("projectId", projectId).order("order").list();
+		project.setPhases(new ArrayList<Phase>(phases));
+		appUtils.calculate(project);
+		return project.getPhases();
 	}
 
 	@Override

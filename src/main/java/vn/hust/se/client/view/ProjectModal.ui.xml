@@ -15,8 +15,8 @@
 					<b:FieldSet>
 
 						<b:FormGroup>
-							<b:FormLabel for="p-name" addStyleNames="col-lg-3">Tên dự án</b:FormLabel>
-							<g:FlowPanel addStyleNames="col-lg-9">
+							<b:FormLabel for="p-name" addStyleNames="col-lg-2">Tên dự án</b:FormLabel>
+							<g:FlowPanel addStyleNames="col-lg-10">
 								<b:TextBox ui:field="nameTb" b:id="p-name" />
 							</g:FlowPanel>
 						</b:FormGroup>
@@ -32,7 +32,7 @@
 		PRIMARY " ui:field="createBtn">
 		Lưu</b:Button>
 				<b:Button type="PRIMARY" ui:field="updateBtn">Cập nhật</b:Button>
-				<b:Button type="DANGER" dismiss="MODAL">Hủy</b:Button>
+				<b:Button type="DANGER" dismiss="MODAL">Đóng</b:Button>
 			</b:ModalFooter>
 		</b:Modal>
 	</g:HTMLPanel>

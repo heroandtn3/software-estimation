@@ -22,6 +22,8 @@ import java.util.List;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import vn.hust.se.client.activities.base.BaseView;
+import vn.hust.se.client.view.ConfirmDialog;
+import vn.hust.se.client.view.PhaseModal;
 import vn.hust.se.client.view.ProjectModal;
 import vn.hust.se.shared.model.Phase;
 import vn.hust.se.shared.model.Project;
@@ -50,4 +52,11 @@ public interface HomeView extends BaseView {
 	
 	ProjectModal getProjectModal();
 	
+	PhaseModal getPhaseModal();
+	
+	Project getSelectedProject();
+	
+	Phase getSelectedPhase();
+	
+	ConfirmDialog getConfirmDialog();
 }

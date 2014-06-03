@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.gwtbootstrap3.client.ui.CellTable;
 
+import vn.hust.se.client.AppUtils;
 import vn.hust.se.shared.model.Project;
 
 import com.google.gwt.cell.client.NumberCell;
@@ -45,6 +46,7 @@ public class ProjectCellTable extends Composite {
 	private ListDataProvider<Project> dataProvider;
 	private CellTable<Project> table;
 	private SingleSelectionModel<Project> selectionModel;
+	private AppUtils appUtils = new AppUtils();
 
 	/**
 	 * 

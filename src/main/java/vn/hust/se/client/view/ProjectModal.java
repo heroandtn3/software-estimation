@@ -24,6 +24,8 @@ import org.gwtbootstrap3.client.ui.Modal;
 import org.gwtbootstrap3.client.ui.TextBox;
 import org.gwtbootstrap3.client.ui.constants.AlertType;
 
+import vn.hust.se.client.SoftwareEstimation;
+import vn.hust.se.client.event.RefreshProjectEvent;
 import vn.hust.se.client.service.DataService;
 import vn.hust.se.shared.model.Project;
 
@@ -57,6 +59,7 @@ public class ProjectModal extends Composite {
 	@UiField TextBox nameTb;
 	@UiField Alert alertPanel;
 	@UiField HTML alertMsg;
+	private Project project;
 
 	
 	public ProjectModal() {
@@ -84,6 +87,7 @@ public class ProjectModal extends Composite {
 						public void onSuccess(Void result) {
 							createBtn.setEnabled(true);
 							modal.hide();
+							SoftwareEstimation.clientFactory.getEventBus().fireEvent(new RefreshProjectEvent());
 						}
 						
 						@Override
@@ -109,9 +113,29 @@ public class ProjectModal extends Composite {
 					alertPanel.setType(AlertType.DANGER);
 					alertMsg.setText("Name is empty");
 				} else {
-					alertPanel.setVisible(true);
-					alertPanel.setType(AlertType.SUCCESS);
-					alertMsg.setText("Updated");
+					updateBtn.setEnabled(false);
+					DataService.pDb.renameProject(
+							project.getId(), name, 
+							new AsyncCallback<Void>() {
+
+								@Override
+								public void onFailure(Throwable caught) {
+									updateBtn.setEnabled(true);
+									alertPanel.setVisible(true);
+									alertPanel.setType(AlertType.DANGER);
+									alertMsg.setText("Error");
+									caught.printStackTrace();
+								}
+
+								@Override
+								public void onSuccess(Void result) {
+									updateBtn.setEnabled(true);
+									alertPanel.setVisible(true);
+									alertPanel.setType(AlertType.SUCCESS);
+									alertMsg.setText("Updated");
+									SoftwareEstimation.clientFactory.getEventBus().fireEvent(new RefreshProjectEvent());
+								}
+							});
 				}
 			}
 		});
@@ -127,10 +151,13 @@ public class ProjectModal extends Composite {
 	}
 	
 	public void editProject(Project project) {
+		this.project = project;
 		title.setText("Sửa dự án");
 		alertPanel.setVisible(false);
 		createBtn.setVisible(false);
 		updateBtn.setVisible(true);
+		
+		nameTb.setText(project.getName());
 		modal.show();
 	}
 
