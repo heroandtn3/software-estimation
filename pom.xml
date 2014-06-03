@@ -11,9 +11,8 @@
 	<name>GWT Maven Archetype</name>
 
 	<properties>
-		<!-- Convenience property to set the GWT version -->
 		<gwtVersion>2.5.1</gwtVersion>
-		<!-- GWT needs at least java 1.5 -->
+		<gaeVersion>1.9.0</gaeVersion>
 		<webappDirectory>${project.build.directory}/${project.build.finalName}</webappDirectory>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -31,6 +30,18 @@
 			<version>${gwtVersion}</version>
 			<scope>provided</scope>
 		</dependency>
+		
+		<!-- Google App Engine -->
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-1.0-sdk</artifactId>
+			<version>${gaeVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.appengine</groupId>
+			<artifactId>appengine-api-labs</artifactId>
+			<version>${gaeVersion}</version>
+		</dependency>
 
 		<!-- Bootstrap 3 -->
 		<dependency>
@@ -38,6 +49,13 @@
 			<artifactId>gwtbootstrap3</artifactId>
 			<version>0.6</version>
 			<scope>provided</scope>
+		</dependency>
+		
+		<!-- Objectify -->
+		<dependency>
+			<groupId>com.googlecode.objectify</groupId>
+			<artifactId>objectify</artifactId>
+			<version>4.0</version>
 		</dependency>
 
 		<dependency>
@@ -114,7 +132,7 @@
 					<projectnatures>
 						<projectnature>org.eclipse.jdt.core.javanature</projectnature>
 						<projectnature>com.google.gdt.eclipse.core.webAppNature</projectnature>
-						<!-- <projectnature>com.google.appengine.eclipse.core.gaeNature</projectnature> -->
+						<projectnature>com.google.appengine.eclipse.core.gaeNature</projectnature>
 						<nature>com.google.gwt.eclipse.core.gwtNature</nature>
 					</projectnatures>
 					<buildcommands>
@@ -126,7 +144,7 @@
 					</buildcommands>
 					<classpathContainers>
 						<classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
-						<!-- <classpathContainer>com.google.appengine.eclipse.core.GAE_CONTAINER</classpathContainer> -->
+						<classpathContainer>com.google.appengine.eclipse.core.GAE_CONTAINER</classpathContainer>
 						<classpathContainer>com.google.gwt.eclipse.core.GWT_CONTAINER</classpathContainer>
 					</classpathContainers>
 					<excludes>

@@ -3,10 +3,6 @@
 	<!-- Inherit the core Web Toolkit stuff. -->
 	<inherits name='com.google.gwt.user.User' />
 
-	<!-- We need the JUnit module in the main module, -->
-	<!-- otherwise eclipse complains (Google plugin bug?) -->
-	<inherits name='com.google.gwt.junit.JUnit' />
-
 	<!-- Inherit the default GWT style sheet. You can change -->
 	<!-- the theme of your GWT application by uncommenting -->
 	<!-- any one of the following lines. -->
@@ -20,6 +16,7 @@
 	<inherits name="com.google.gwt.json.JSON" />
 	<inherits name="com.google.gwt.activity.Activity" />
 	<inherits name="com.google.gwt.i18n.I18N"/>
+	<inherits name="com.googlecode.objectify.Objectify" />
 
 	<!-- Specify the app entry point class. -->
 	<entry-point class='vn.hust.se.client.SoftwareEstimation' />
