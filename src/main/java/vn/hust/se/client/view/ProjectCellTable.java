@@ -21,7 +21,7 @@ import java.util.List;
 
 import org.gwtbootstrap3.client.ui.CellTable;
 
-import vn.hust.se.client.model.Project;
+import vn.hust.se.shared.model.Project;
 
 import com.google.gwt.cell.client.NumberCell;
 import com.google.gwt.core.shared.GWT;

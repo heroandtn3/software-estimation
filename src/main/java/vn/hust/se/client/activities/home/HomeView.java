@@ -22,9 +22,9 @@ import java.util.List;
 import com.google.gwt.event.dom.client.HasClickHandlers;
 
 import vn.hust.se.client.activities.base.BaseView;
-import vn.hust.se.client.model.Phase;
-import vn.hust.se.client.model.Project;
 import vn.hust.se.client.view.ProjectModal;
+import vn.hust.se.shared.model.Phase;
+import vn.hust.se.shared.model.Project;
 
 /**
  * @author heroandtn3

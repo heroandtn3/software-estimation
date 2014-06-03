@@ -22,11 +22,11 @@ import java.util.List;
 import org.gwtbootstrap3.client.ui.Button;
 
 import vn.hust.se.client.activities.base.BaseViewGwt;
-import vn.hust.se.client.model.Phase;
-import vn.hust.se.client.model.Project;
 import vn.hust.se.client.view.PhaseCellTable;
 import vn.hust.se.client.view.ProjectCellTable;
 import vn.hust.se.client.view.ProjectModal;
+import vn.hust.se.shared.model.Phase;
+import vn.hust.se.shared.model.Project;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.SpanElement;
