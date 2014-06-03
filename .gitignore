@@ -1,0 +1,11 @@
+# java
+*.jar
+*.class
+
+# eclipse files
+.classpath
+.project
+.settings/*
+
+# maven
+target/*
